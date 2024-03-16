@@ -1,1 +1,2 @@
-# ocr_factory
+To install all dependencies
+```make build```

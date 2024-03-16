@@ -1,0 +1,14 @@
+__pycache__/
+.ipynb_checkpoints/
+
+# Default ignored files
+/shelf/
+/workspace.xml
+# Editor-based HTTP Client requests
+/httpRequests/
+# Datasource local storage ignored files
+/dataSources/
+/dataSources.local.xml
+/.idea/
+weigths/
+src/ai_models/stt/weights/*
