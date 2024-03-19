@@ -6,8 +6,8 @@ from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from src.api.app.middleware import BackendMiddleware
-from src.api.app.endpoint import router
+from api.app.middleware import BackendMiddleware
+from api.app.endpoint import router
 
 
 # LOGGING CONFIG SETTING
@@ -15,7 +15,7 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
 )
-logging.info("Running speech2text models.")
+logging.info("Running ocr model factory.")
 
 
 # APP CONFIG SET
@@ -51,7 +51,7 @@ async def root() -> str:
     Returns:
         str: small html page with microphone.
     """
-    html_file_path = "docs/index.html"
+    html_file_path = "../docs/index.html"
 
     try:
         with open(html_file_path, "r", encoding="utf-8") as file:

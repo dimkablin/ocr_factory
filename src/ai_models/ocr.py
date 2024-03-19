@@ -1,27 +1,28 @@
 """ Factory Method - Design Pattern """
+from ai_models.ocr_models.ocr_interface import OCRInterface
 from ai_models.ocr_models.easyocr import EasyOCRInited
 from ai_models.ocr_models.easyocr_trained import EasyOCRInitedTrained
 from ai_models.ocr_models.pytesseract import PyTesseractInited
 from ai_models.ocr_models.pytesseract_trained import PyTesseractTrained
 
-from ai_models.ocr_models.ocr_interface import OCRInterface
+from api.app.models import ResultModel
 
 
 class OCRFactory:
     """ Factory Method - Design Pattern implementation """
 
     MODEL_MAP = {
-        PyTesseractInited.get_model_type(): PyTesseractInited,
-        PyTesseractTrained.get_model_type(): PyTesseractTrained,
-        EasyOCRInited.get_model_type(): EasyOCRInited,
-        EasyOCRInitedTrained.get_model_type(): EasyOCRInitedTrained
+        PyTesseractInited.get_model_name(): PyTesseractInited,
+        PyTesseractTrained.get_model_name(): PyTesseractTrained,
+        EasyOCRInited.get_model_name(): EasyOCRInited,
+        EasyOCRInitedTrained.get_model_name(): EasyOCRInitedTrained
     }
 
     # get first model
-    MODEL = MODEL_MAP[PyTesseractInited.get_model_type()]()
+    MODEL = MODEL_MAP[PyTesseractInited.get_model_name()]()
 
     @classmethod
-    def __call__(cls, *args, **kwargs) -> dict:
+    def __call__(cls, *args, **kwargs) -> ResultModel:
         """Call the current model"""
         result = cls.MODEL(*args, **kwargs)
 

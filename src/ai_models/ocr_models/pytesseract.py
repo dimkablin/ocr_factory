@@ -3,7 +3,7 @@ from typing import Any
 from pytesseract import Output
 import pytesseract
 from ai_models.ocr_models.ocr_interface import OCRInterface
-from utils.extract_features import preprocess_image
+from api.app.models import ResultModel
 
 
 class PyTesseractInited(OCRInterface):
@@ -15,20 +15,17 @@ class PyTesseractInited(OCRInterface):
         self.config = f"--oem {self.oem} --psm {self.psm} --tessdata-dir {self.local_config_dir}"
         self.thresh = 0.3
 
-    def __call__(self, inputs, *args, **kwargs) -> list[dict[str, list[Any]]]:
+    def __call__(self, inputs, *args, **kwargs) -> ResultModel:
         results = []
 
         for image in inputs:
-            # preprocess image
-            image = preprocess_image(image)
-
             outputs = pytesseract.image_to_data(image,
                                                 lang='rus',
                                                 config=self.config,
                                                 output_type=Output.DICT,
                                                 *args,
                                                 **kwargs)
-            result = {'rec_texts': [], 'rec_scores': [], 'det_polygons': [], 'det_scores': []}
+            result = ResultModel(rec_texts=[], rec_scores=[], det_polygons=[], det_scores=[])
 
             for i, conf in enumerate(outputs['conf']):
                 # if rec is empty or it's lower than thresh
@@ -40,13 +37,13 @@ class PyTesseractInited(OCRInterface):
                 width = outputs['width'][i]
                 height = outputs['height'][i]
 
-                result['det_scores'].append(1)
-                result['det_polygons'].append([x_bbox, y_bbox,
+                result.det_scores.append(1)
+                result.det_polygons.append([x_bbox, y_bbox,
                                                x_bbox + width, y_bbox,
                                                x_bbox + width, y_bbox + height,
                                                x_bbox, y_bbox + height])
-                result['rec_scores'].append(conf / 100.)
-                result['rec_texts'].append(outputs['text'][i])
+                result.rec_scores.append(conf / 100.)
+                result.rec_texts.append(outputs['text'][i])
 
             results.append(result)
 
@@ -56,7 +53,7 @@ class PyTesseractInited(OCRInterface):
         return f"PyTesseract OCR --oem {self.oem} --psm {self.psm}"
 
     @staticmethod
-    def get_model_type() -> str:
+    def get_model_name() -> str:
         """Return model type."""
         return "Tesseract"
   

@@ -4,6 +4,7 @@ import easyocr
 
 from ai_models.ocr_models.ocr_interface import OCRInterface
 from env import USE_CUDA
+from api.app.models import ResultModel
 
 
 class EasyOCRInited(OCRInterface):
@@ -20,20 +21,20 @@ class EasyOCRInited(OCRInterface):
             recog_network='cyrillic_g2'
         )
 
-    def __call__(self, inputs, *args, **kwargs) -> list[dict[str, list[Any]]]:
+    def __call__(self, inputs, *args, **kwargs) -> ResultModel:
         results = []
         for image in inputs:
 
             horizontal_boxes, free_boxes = self.model.detect(image)
             outputs = self.model.recognize(image, horizontal_boxes[0], free_boxes[0])
 
-            result = {'rec_texts': [], 'rec_scores': [], 'det_polygons': [], 'det_scores': []}
+            result = ResultModel(rec_texts=[], rec_scores=[], det_polygons=[], det_scores=[])
 
             for bbox, text, conf in outputs:
-                result['det_scores'].append(1)
-                result['det_polygons'].append([int(coord) for xy in bbox for coord in xy])
-                result['rec_scores'].append(conf)
-                result['rec_texts'].append(text)
+                result.det_scores.append(1)
+                result.det_polygons.append([int(coord) for xy in bbox for coord in xy])
+                result.rec_scores.append(conf)
+                result.rec_texts.append(text)
             results.append(result)
 
         return results
@@ -42,6 +43,6 @@ class EasyOCRInited(OCRInterface):
         return f"EasyOCR lang {self.languages}"
 
     @staticmethod
-    def get_model_type() -> str:
+    def get_model_name() -> str:
         """Return model type."""
         return "EasyOCR"

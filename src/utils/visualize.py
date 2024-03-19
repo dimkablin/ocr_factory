@@ -1,8 +1,11 @@
 """ Visualization functions """
+import io
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import patches
 from matplotlib.pyplot import colormaps
+
+from api.app.models import ResultModel
 
 
 def show(image: np.ndarray, figsize: tuple[int, int] = (15, 7)) -> None:
@@ -14,7 +17,7 @@ def show(image: np.ndarray, figsize: tuple[int, int] = (15, 7)) -> None:
     plt.show()
 
 
-def result2show(image, result, cmap=colormaps['summer']) -> None:
+def result2show(image, result: ResultModel, cmap=colormaps['summer']) -> None:
     """
     Plot the original image and an empty white image for overlaying boxes and text
     A dictionary with the following keys and value types:
@@ -24,9 +27,9 @@ def result2show(image, result, cmap=colormaps['summer']) -> None:
         - 'det_scores': List of floats
 
     """
-
     # plot image
     _, axis = plt.subplots(1, 2, figsize=(16, 16))
+
     axis[0].imshow(image, cmap='gray')
     axis[0].axis('off')
 
@@ -35,13 +38,12 @@ def result2show(image, result, cmap=colormaps['summer']) -> None:
     white_img.fill(255)
     axis[1].imshow(white_img, cmap='gray', vmin=0, vmax=255)
     axis[1].axis('off')
-
     # Iterate through the result dictionary
-    for i in range(len(result['rec_texts'])):
-        rec_texts = result['rec_texts'][i]
-        rec_scores = result['rec_scores'][i]
-        det_polygons = result['det_polygons'][i]
-        det_scores = result['det_scores'][i]
+    for i in range(len(result.rec_texts)):
+        rec_texts = result.rec_texts[i]
+        rec_scores = result.rec_scores[i]
+        det_polygons = result.det_polygons[i]
+        det_scores = result.det_scores[i]
 
         x_coord = [int(coord) for coord in det_polygons[0::2]]
         y_coord = [int(coord) for coord in det_polygons[1::2]]
