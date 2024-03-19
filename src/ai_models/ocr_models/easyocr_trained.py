@@ -2,11 +2,11 @@
 from typing import Any
 import easyocr
 
-from ai_models.ocr_models.ocr_interface import OCR
+from ai_models.ocr_models.ocr_interface import OCRInterface
 from env import USE_CUDA
 
 
-class EasyOCRInitedCustom(OCR):
+class EasyOCRInitedTrained(OCRInterface):
     """ Initialized EasyOCR model """
     def __init__(self):
         self.languages = ['ru']
@@ -14,8 +14,8 @@ class EasyOCRInitedCustom(OCR):
         self.model = easyocr.Reader(
             self.languages,
             gpu=self.use_cuda,
-            model_storage_directory='src/ai_models/weights/ocr/easyocr/model',
-            user_network_directory='src/ai_models/weights/ocr/easyocr/user_network',
+            model_storage_directory='ai_models/weights/ocr/easyocr/model',
+            user_network_directory='ai_models/weights/ocr/easyocr/user_network',
             download_enabled=False,
             recog_network='ru_custom'
         )

@@ -14,8 +14,6 @@ from skimage.transform import (hough_line, hough_line_peaks)
 from skimage.filters import threshold_otsu, sobel
 from scipy.stats import mode
 
-from src.api.models.ai_models import Cut
-
 
 def byte2numpy(image) -> np.ndarray:
     """ Read image bytes and return numpy array"""
@@ -325,46 +323,46 @@ def rotate_bboxes(bboxes, angle_degrees, shape):
     return result
 
 
-def crop(image: np.ndarray,
-         w2h_koeff: float) -> np.ndarray:
-    """_summary_
+# def crop(image: np.ndarray,
+#          w2h_koeff: float) -> np.ndarray:
+#     """_summary_
 
-    Args:
-        image (np.ndarray): _description_
-        width (_type_): _description_
-        height (_type_): _description_
-        w2h_koeff (_type_): _description_
+#     Args:
+#         image (np.ndarray): _description_
+#         width (_type_): _description_
+#         height (_type_): _description_
+#         w2h_koeff (_type_): _description_
 
-    Returns:
-        np.ndarray: _description_
-    """
-    height, width = image.shape[:2]
-    if width > height:
-        width = min(width, int(height*w2h_koeff))
-    else:
-        height = min(height, int(width/w2h_koeff))
+#     Returns:
+#         np.ndarray: _description_
+#     """
+#     height, width = image.shape[:2]
+#     if width > height:
+#         width = min(width, int(height*w2h_koeff))
+#     else:
+#         height = min(height, int(width/w2h_koeff))
 
-    image = cut(
-        image,
-        Cut(x1=0, y1=0, height=height, width=width)
-    )
+#     image = cut(
+#         image,
+#         Cut(x1=0, y1=0, height=height, width=width)
+#     )
 
-    return image
+#     return image
 
-def cut(image: np.ndarray, cut_: Cut) -> np.ndarray:
-    """ Cut the image
+# def cut(image: np.ndarray, cut_: Cut) -> np.ndarray:
+#     """ Cut the image
 
-    Args:
-        image (np.ndarray): input
-        cut (Cut): Base FastAPI Model
+#     Args:
+#         image (np.ndarray): input
+#         cut (Cut): Base FastAPI Model
 
-    Returns:
-        np.ndarray: cuted image
-    """
+#     Returns:
+#         np.ndarray: cuted image
+#     """
 
-    cut_x1 = max(0, min(cut_.x1, image.shape[1] - 1))
-    cut_y1 = max(0, min(cut_.y1, image.shape[0] - 1))
-    cut_width = max(1, min(cut_.width, image.shape[1] - cut_x1))
-    cut_height = max(1, min(cut_.height, image.shape[0] - cut_y1))
+#     cut_x1 = max(0, min(cut_.x1, image.shape[1] - 1))
+#     cut_y1 = max(0, min(cut_.y1, image.shape[0] - 1))
+#     cut_width = max(1, min(cut_.width, image.shape[1] - cut_x1))
+#     cut_height = max(1, min(cut_.height, image.shape[0] - cut_y1))
 
-    return image[cut_y1:cut_y1 + cut_height, cut_x1:cut_x1 + cut_width, :]
+#     return image[cut_y1:cut_y1 + cut_height, cut_x1:cut_x1 + cut_width, :]

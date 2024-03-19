@@ -3,5 +3,5 @@
 import os
 
 # importing environment variables from .env file
-SERVER_PATH = os.getenv("SERVER_PATH")
-USE_CUDA = eval(os.getenv("USE_CUDA"))
+BACKEND_URL = os.getenv("BACKEND_URL", default="http://localhost:8000")
+USE_CUDA = eval(os.getenv("USE_CUDA", default="True"))

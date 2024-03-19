@@ -1,37 +1,61 @@
 """ Factory Method - Design Pattern """
-from src.ai_models.ocr_models.easyocr import EasyOCRInited
-from src.ai_models.ocr_models.easyocr_custom import EasyOCRInitedCustom
-from src.ai_models.ocr_models.pytesseract import PyTesseractInited, PyTesseractTrained
-from src.ai_models.ocr_models.pytesseract2 import PyTesseractCraftTrained, PyTesseractCraft
-from src.ai_models.ocr_models.none_ocr import NoneOCRInited
+from ai_models.ocr_models.easyocr import EasyOCRInited
+from ai_models.ocr_models.easyocr_trained import EasyOCRInitedTrained
+from ai_models.ocr_models.pytesseract import PyTesseractInited
+from ai_models.ocr_models.pytesseract_trained import PyTesseractTrained
+
+from ai_models.ocr_models.ocr_interface import OCRInterface
 
 
-class OCRModelFactory:
+class OCRFactory:
     """ Factory Method - Design Pattern implementation """
 
-    MODEL_MAPPING = {
-        NoneOCRInited.get_model_type(): NoneOCRInited(),
-        PyTesseractInited.get_model_type(): PyTesseractInited(),
-        PyTesseractTrained.get_model_type(): PyTesseractTrained(),
-        PyTesseractCraft.get_model_type(): PyTesseractCraft(),
-        PyTesseractCraftTrained.get_model_type(): PyTesseractCraftTrained(),
-        EasyOCRInitedCustom.get_model_type(): EasyOCRInitedCustom(),
-        EasyOCRInited.get_model_type(): EasyOCRInited(),
+    MODEL_MAP = {
+        PyTesseractInited.get_model_type(): PyTesseractInited,
+        PyTesseractTrained.get_model_type(): PyTesseractTrained,
+        EasyOCRInited.get_model_type(): EasyOCRInited,
+        EasyOCRInitedTrained.get_model_type(): EasyOCRInitedTrained
     }
 
-    @staticmethod
-    def get(model_type):
+    # get first model
+    MODEL = MODEL_MAP[PyTesseractInited.get_model_type()]()
+
+    @classmethod
+    def __call__(cls, *args, **kwargs) -> dict:
+        """Call the current model"""
+        result = cls.MODEL(*args, **kwargs)
+
+        # grabage collector will delete this objects from CPU memory
+        args, kwargs = None, None
+
+        return result
+
+    @classmethod
+    def get_model(cls) -> OCRInterface:
         """ Create OCR model by its name """
-        model = OCRModelFactory.MODEL_MAPPING.get(model_type)
+        return cls.MODEL
 
-        if model is None:
-            raise ValueError("Invalid OCR model type")
-        return model
+    @classmethod
+    def get_model_names(cls):
+        """Return a list of model names"""
+        return list(cls.MODEL_MAP.keys())
 
-    @staticmethod
-    def get_models():
-        """ Getter of ai_models name """
-        return OCRModelFactory.MODEL_MAPPING.keys()
+    @classmethod
+    def change_model(cls, model_name: str) -> None:
+        """Change the model"""
+
+        if model_name not in cls.get_model_names():
+            return False
+
+        # delete model from DEVICE
+        if hasattr(cls.MODEL, 'model'):
+            cls.MODEL.model.to("cpu")
+            del cls.MODEL.model
+
+        cls.MODEL = cls.MODEL_MAP[model_name]()
+
+        # success
+        return True
 
 
-OCR_MODEL = OCRModelFactory()
+MODELS_FACTORY = OCRFactory()

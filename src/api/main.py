@@ -4,6 +4,7 @@ import logging
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from src.api.app.middleware import BackendMiddleware
 from src.api.app.endpoint import router
@@ -24,7 +25,7 @@ app = FastAPI(
     openapi_url="/openapi.json",
     openapi_tags=[{
         "name": "Backend API",
-        "description": "API for speech2text models factory method."
+        "description": "API for ocr models factory method."
     }]
 )
 
@@ -39,6 +40,7 @@ app.add_middleware(
     allow_credentials=True,
 )
 app.include_router(router, tags=["ai_models"])
+app.mount("/docs", StaticFiles(directory="../docs"), name="docs")
 
 
 # GREETING SITE

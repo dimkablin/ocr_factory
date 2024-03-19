@@ -3,7 +3,7 @@
 from abc import ABC, abstractmethod
 
 
-class OCR(ABC):
+class OCRInterface(ABC):
     """ Interface of ocr ai_models """
     @abstractmethod
     def __call__(self, *args, **kwargs) -> dict:

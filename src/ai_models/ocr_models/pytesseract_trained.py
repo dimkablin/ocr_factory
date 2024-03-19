@@ -2,13 +2,13 @@
 from typing import Any
 from pytesseract import Output
 import pytesseract
-from ai_models.ocr_models.ocr_interface import OCR
-from utils.extract_features import preprocess_image 
+from ai_models.ocr_models.ocr_interface import OCRInterface
 
-class PyTesseractTrained(OCR):
+
+class PyTesseractTrained(OCRInterface):
     """ Initialized PyTesseract model """
     def __init__(self, psm=6, oem=3):
-        self.local_config_dir = 'src/ai_models/weights/ocr/pytesseract'
+        self.local_config_dir = 'ai_models/weights/ocr/pytesseract'
         self.oem = oem
         self.psm = psm
         self.config = f"--oem {self.oem} --psm {self.psm} --tessdata-dir {self.local_config_dir}"
