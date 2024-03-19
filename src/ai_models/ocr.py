@@ -49,7 +49,6 @@ class OCRFactory:
 
         # delete model from DEVICE
         if hasattr(cls.MODEL, 'model'):
-            cls.MODEL.model.to("cpu")
             del cls.MODEL.model
 
         cls.MODEL = cls.MODEL_MAP[model_name]()
