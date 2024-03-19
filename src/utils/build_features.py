@@ -9,7 +9,6 @@ import io
 from PIL import Image
 import cv2
 import numpy as np
-from skimage.color import rgb2gray
 from skimage.transform import (hough_line, hough_line_peaks)
 from skimage.filters import threshold_otsu, sobel
 from scipy.stats import mode
@@ -279,90 +278,3 @@ def rotate_image(image: np.ndarray, angle: int) -> np.ndarray:
     rotated_image = cv2.rotate(image, rotation_flag)
 
     return rotated_image
-
-
-def rotate_vector(x, y, angle_degrees):
-    """Rotate vector"""
-    # Преобразование угла из градусов в радианы
-    angle_radians = np.radians(angle_degrees)
-
-    # Матрица поворота
-    rotation_matrix = np.array([
-        [np.cos(angle_radians), -np.sin(angle_radians)],
-        [np.sin(angle_radians), np.cos(angle_radians)]
-    ])
-
-    # Поворот вектора
-    rotated_vector = np.dot(rotation_matrix, np.array([x, y]))
-
-    return list(rotated_vector)
-
-
-def rotate_bboxes(bboxes, angle_degrees, shape):
-    """Rotate bounding boxes"""
-    # определим смещение как s = min(0, rotated(w, h))
-    # также  w' = w - s
-    h, w = shape
-    s_x, s_y = map(int, rotate_vector(w, h, angle_degrees))
-    s_x, s_y = min(0, s_x), min(0, s_y)
-
-    result = []
-    for x1, y1, x2, y2, x3, y3, x4, y4 in bboxes:
-        rotated_coords = np.array([
-            rotate_vector(x1, y1, angle_degrees),
-            rotate_vector(x2, y2, angle_degrees),
-            rotate_vector(x3, y3, angle_degrees),
-            rotate_vector(x4, y4, angle_degrees)
-        ])
-
-        rotated_coords[:, 0] -= s_x
-        rotated_coords[:, 1] -= s_y
-
-        result.append(list(map(int, rotated_coords.flatten())))
-
-    return result
-
-
-# def crop(image: np.ndarray,
-#          w2h_koeff: float) -> np.ndarray:
-#     """_summary_
-
-#     Args:
-#         image (np.ndarray): _description_
-#         width (_type_): _description_
-#         height (_type_): _description_
-#         w2h_koeff (_type_): _description_
-
-#     Returns:
-#         np.ndarray: _description_
-#     """
-#     height, width = image.shape[:2]
-#     if width > height:
-#         width = min(width, int(height*w2h_koeff))
-#     else:
-#         height = min(height, int(width/w2h_koeff))
-
-#     image = cut(
-#         image,
-#         Cut(x1=0, y1=0, height=height, width=width)
-#     )
-
-#     return image
-
-# def cut(image: np.ndarray, cut_: Cut) -> np.ndarray:
-#     """ Cut the image
-
-#     Args:
-#         image (np.ndarray): input
-#         cut (Cut): Base FastAPI Model
-
-#     Returns:
-#         np.ndarray: cuted image
-#     """
-
-#     cut_x1 = max(0, min(cut_.x1, image.shape[1] - 1))
-#     cut_y1 = max(0, min(cut_.y1, image.shape[0] - 1))
-#     cut_width = max(1, min(cut_.width, image.shape[1] - cut_x1))
-#     cut_height = max(1, min(cut_.height, image.shape[0] - cut_y1))
-
-#     return image[cut_y1:cut_y1 + cut_height, cut_x1:cut_x1 + cut_width, :]
