@@ -8,7 +8,6 @@ from matplotlib import pyplot as plt
 import numpy as np
 from ai_models.ocr import MODELS_FACTORY
 from api.app.models import ResultModel
-from utils.visualize import result2show
 
 
 router = APIRouter()
