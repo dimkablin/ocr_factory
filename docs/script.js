@@ -1,13 +1,15 @@
-const btnSendPhoto = document.querySelector('#btnSendPhoto')
-const inpImg = document.querySelector('#inpImg')
-const divContentFiles = document.querySelector('#contentFiles')
+const btnSendPhoto = document.querySelector('#btnSendPhoto');
+const inpImg = document.querySelector('#inpImg');
+const divContentFiles = document.querySelector('#contentFiles');
+const imageContainer = document.getElementById('imageContainer');
 
 const addElementOcr = (key, value) => `
     <div>
         <h3>${key}</h3>
         <p>${value}</p>
     </div>
-`
+`;
+
 const applyTextBlockStyles = (textBlock) => {
     textBlock.style.display = 'flex';
     textBlock.style.justifyContent = 'center';
@@ -19,6 +21,9 @@ const applyTextBlockStyles = (textBlock) => {
 };
 
 function result2show(image, result) {
+    // Clear previous images
+    imageContainer.innerHTML = '';
+
     // Create canvas elements
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
@@ -41,10 +46,9 @@ function result2show(image, result) {
     ctx2.fillStyle = '#FFFFFF'; // White color
     ctx2.fillRect(0, 0, canvas2.width, canvas2.height);
 
-    // Create container for canvas elements
-    const container = document.getElementById('imageContainer');
-    container.appendChild(canvas);
-    container.appendChild(canvas2);
+    // Append canvas elements to the image container
+    imageContainer.appendChild(canvas);
+    imageContainer.appendChild(canvas2);
 
     // Iterate through the result dictionary
     for (let i = 0; i < result.rec_texts.length; i++) {
@@ -102,17 +106,9 @@ btnSendPhoto.addEventListener('click', e => {
     })
         .then(resp => resp.json())
         .then(ocr => {
-            const imageContainer = document.querySelector('#imageContainer');
-            const textBlocks = document.querySelector('#textBlocks');
-        
-            // Clear previous text blocks
-            textBlocks.innerHTML = '';
-        
-            // Insert uploaded image
-            const uploadedImage = document.querySelector('#uploadedImage');
+            const uploadedImage = new Image();
             uploadedImage.src = URL.createObjectURL(inpImg.files[0]);
             uploadedImage.onload = () => {   
-
                 result2show(uploadedImage, ocr);
             };
         })
