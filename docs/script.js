@@ -86,7 +86,7 @@ function result2show(image, result) {
 
         // Draw text on the second canvas
         ctx2.fillStyle = 'black'; // Black color for text
-        ctx2.font = '12px Arial';
+        ctx2.font = '22px Arial';
         ctx2.textBaseline = 'middle';
         ctx2.textAlign = 'left';
         ctx2.fillText(rec_texts.replace('$', '\\$'), x_coord[0], y_coord.reduce((acc, val) => acc + val, 0) / y_coord.length);
