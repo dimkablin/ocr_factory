@@ -10,10 +10,19 @@
     <h1>OCR API</h1>
     <input type="file" id="inpImg">
     <button id="btnSendPhoto">
-        Send photo</button>
+        Send photo
+    </button>
+    <div id="modelSelection">
+        <h1>Select Model</h1>
+        <select id="modelSelect"></select>
+    </div>
     <div>
         <h1>Content files</h1>
         <div id="contentFiles"></div>
+    </div>
+    <div id="imageContainer" style="position: relative;">
+        <img id="uploadedImage" src="#" alt="Uploaded Image" style="max-width: 100%; max-height: 400px;">
+        <div id="textBlocks" style="position: absolute; top: 0; left: 0;"></div>
     </div>
     <script src="docs/script.js" type="text/javascript"></script>
 </body>

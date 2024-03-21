@@ -23,23 +23,11 @@ button:disabled {
     cursor: not-allowed;
 }
 
-#resultContainer {
+#contentFiles {
     margin-top: 20px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    background-color: #fff; 
 }
 
-body.night-mode {
-    background-color: #333; 
-    color: #fff; 
-}
-
-body.night-mode button {
-    background-color: #666; 
-}
-
-body.night-mode #resultContainer {
-    border-color: #666; 
-    background-color: #444
+#imageContainer {
+    position: relative;
+    margin-top: 20px;
 }
