@@ -48,3 +48,5 @@ async def change_model(model_name: str):
         status_code=200,
         content={"message": f"Model changed to {model_name}."}
     )
+
+# @router.get("/get-corrected")
