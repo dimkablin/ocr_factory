@@ -37,7 +37,7 @@ async def ocr(image: UploadFile) -> ResultModel:
     return result
 
 
-@router.get("/change-model")
+@router.post("/change-model")
 async def change_model(model_name: str):
     """Change the model"""
 
@@ -49,4 +49,3 @@ async def change_model(model_name: str):
         content={"message": f"Model changed to {model_name}."}
     )
 
-# @router.get("/get-corrected")
