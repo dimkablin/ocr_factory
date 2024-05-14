@@ -13,7 +13,7 @@ RUN apt install libicu-dev libicu-dev libcairo2-dev libtesseract-dev tesseract-o
 RUN make build
 
 EXPOSE 8000
-ENV NAME env_file
 
 WORKDIR /app/src
 CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+#uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload

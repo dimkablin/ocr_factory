@@ -1,5 +1,6 @@
 """Main FastAPI entry point."""
 import logging
+import gradio as gr
 
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
@@ -9,6 +10,7 @@ from fastapi.staticfiles import StaticFiles
 from api.app.middleware import BackendMiddleware
 from api.app.endpoint import router
 
+from ai_models.ocr import MODELS_FACTORY
 
 # LOGGING CONFIG SETTING
 logging.basicConfig(
@@ -29,7 +31,6 @@ app = FastAPI(
     }]
 )
 
-
 # MIDDLEWARE CONFIG SET
 app.add_middleware(BackendMiddleware)
 app.add_middleware(
@@ -42,20 +43,36 @@ app.add_middleware(
 app.include_router(router, tags=["ai_models"])
 app.mount("/docs", StaticFiles(directory="../docs"), name="docs")
 
+# @app.get("/")
+# def read_main():
+#     return {"message": "This is your main app"}
 
-# GREETING SITE
-@app.get("/")
-async def root() -> str:
-    """Return a HTTP greeting.
+#####GRADIO
+def ocr_inf(image):
+    result = MODELS_FACTORY([image])[0]
+    return result
 
-    Returns:
-        str: small html page with microphone.
-    """
-    html_file_path = "../docs/index.html"
+def model_change(x):
+    MODELS_FACTORY.change_model(x)
 
-    try:
-        with open(html_file_path, "r", encoding="utf-8") as file:
-            file_content = file.read()
-        return HTMLResponse(content=file_content)
-    except FileNotFoundError:
-        return HTMLResponse(status_code=404, content="Documentation file not found.")
+def get_model_names():
+    return MODELS_FACTORY.get_model_names()
+
+def get_cur_model():
+    return MODELS_FACTORY.get_model().get_model_name()
+
+with gr.Blocks() as demo:
+    with gr.Tab("Модель"):
+        with gr.Row():
+            image_input = gr.Image()
+            image_output = gr.Textbox()
+        image_button = gr.Button("Распознать")
+
+    with gr.Tab("Настройки"):
+            model_drop = gr.Dropdown(get_model_names(), value=get_cur_model(), label="Текущая модель")
+            text_button = gr.Button("Применить")
+
+    text_button.click(model_change, inputs=model_drop)
+    image_button.click(ocr_inf, inputs=image_input, outputs=image_output)
+
+gradio_app = gr.mount_gradio_app(app, demo, path="/")
