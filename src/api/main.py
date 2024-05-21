@@ -11,6 +11,7 @@ from api.app.middleware import BackendMiddleware
 from api.app.endpoint import router
 
 from ai_models.ocr import MODELS_FACTORY
+from utils.visualize import draw_bounding_boxes
 
 # LOGGING CONFIG SETTING
 logging.basicConfig(
@@ -50,7 +51,8 @@ app.mount("/docs", StaticFiles(directory="../docs"), name="docs")
 #####GRADIO
 def ocr_inf(image):
     result = MODELS_FACTORY([image])[0]
-    return result
+    image_out = draw_bounding_boxes(image, result)
+    return result, image_out
 
 def model_change(x):
     MODELS_FACTORY.change_model(x)
@@ -65,7 +67,8 @@ with gr.Blocks() as demo:
     with gr.Tab("Модель"):
         with gr.Row():
             image_input = gr.Image()
-            image_output = gr.Textbox()
+            image_output = gr.Image()
+        text_output = gr.Textbox(label="Результат")
         image_button = gr.Button("Распознать")
 
     with gr.Tab("Настройки"):
@@ -73,6 +76,6 @@ with gr.Blocks() as demo:
             text_button = gr.Button("Применить")
 
     text_button.click(model_change, inputs=model_drop)
-    image_button.click(ocr_inf, inputs=image_input, outputs=image_output)
+    image_button.click(ocr_inf, inputs=image_input, outputs=[text_output, image_output])
 
 gradio_app = gr.mount_gradio_app(app, demo, path="/")
