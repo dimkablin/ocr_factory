@@ -9,6 +9,7 @@ from fastapi.staticfiles import StaticFiles
 
 from api.app.middleware import BackendMiddleware
 from api.app.endpoint import router
+from api.app.counter import invoke_model_use
 
 from ai_models.ocr import MODELS_FACTORY
 from utils.visualize import draw_bounding_boxes
@@ -50,12 +51,14 @@ app.mount("/docs", StaticFiles(directory="../docs"), name="docs")
 
 #####GRADIO
 def ocr_inf(image):
+    invoke_model_use(get_cur_model())#count how many model calls
     result = MODELS_FACTORY([image])[0]
     image_out = draw_bounding_boxes(image, result)
     return result, image_out
 
 def model_change(x):
     MODELS_FACTORY.change_model(x)
+    gr.Info(f"Модель была изменена на: {x}")
 
 def get_model_names():
     return MODELS_FACTORY.get_model_names()
@@ -64,6 +67,14 @@ def get_cur_model():
     return MODELS_FACTORY.get_model().get_model_name()
 
 with gr.Blocks() as demo:
+    gr.Markdown(
+    """
+    # OCR factory
+    Контейнер для распознавания текста при помощи моделей easyOCR, tesseract.\n
+    Выберите модель во вкладке настройки (по стандарту выбрана модель tesseract),
+    загрузите ваш документ и нажимите кнопку распознать.
+    """
+    )
     with gr.Tab("Модель"):
         with gr.Row():
             image_input = gr.Image()

@@ -14,8 +14,10 @@ params_tesseract = {
 }
 
 model_params = {
-    "easyOCR" : params_easyocr,
-    "tesseract" : params_tesseract
+    "EasyOCR" : params_easyocr,
+    "EasyOCR Trained" : params_easyocr,
+    "Tesseract" : params_tesseract,
+    "Tesseract trained" : params_tesseract
 }
 
 def invoke_model_use(model, ammount=1):

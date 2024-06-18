@@ -16,7 +16,7 @@ class PyTesseractTrained(OCRInterface):
         self.thresh = 0.3
 
     def __call__(self, inputs, *args, **kwargs) -> ResultModel:
-        invoke_model_use("tesseract")#count how many model calls
+        invoke_model_use("Tesseract trained")#count how many model calls
         results = []
         for image in inputs:
             outputs = pytesseract.image_to_data(image,

@@ -22,7 +22,7 @@ class EasyOCRInited(OCRInterface):
         )
 
     def __call__(self, inputs, *args, **kwargs) -> ResultModel:
-        invoke_model_use("easyOCR")#count how many model calls
+        invoke_model_use("EasyOCR")#count how many model calls
         results = []
         for image in inputs:
 
