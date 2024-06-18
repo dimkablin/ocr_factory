@@ -5,7 +5,7 @@ import easyocr
 from ai_models.ocr_models.ocr_interface import OCRInterface
 from env import USE_CUDA
 from api.app.models import ResultModel
-
+from api.app.counter import invoke_model_use
 
 class EasyOCRInited(OCRInterface):
     """ Initialized EasyOCR model """
@@ -22,6 +22,7 @@ class EasyOCRInited(OCRInterface):
         )
 
     def __call__(self, inputs, *args, **kwargs) -> ResultModel:
+        invoke_model_use("easyOCR")#count how many model calls
         results = []
         for image in inputs:
 
